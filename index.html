@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>artyom frstup6d</title>
+<title>artyom chrmgrm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -36,10 +36,15 @@
     position: relative;
   }
 
-  .desktop-icon {
+  .desktop-icons {
     position: absolute;
     top: 32px;
     left: 32px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .desktop-icon {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,12 +53,31 @@
     cursor: pointer;
     user-select: none;
     text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .desktop-icon:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+    border-radius: 6px;
   }
 
   .desktop-icon .folder {
     width: 52px;
     height: 44px;
     object-fit: contain;
+  }
+
+  .desktop-icon .app-icon {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 13px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    background: #eef1ff;
   }
 
   .desktop-icon span {
@@ -114,7 +138,7 @@
   .status-dot.instagram { background: #ffb020; }
 
   @media (max-width: 480px) {
-    .desktop-icon { top: 16px; left: 16px; }
+    .desktop-icons { top: 16px; left: 16px; }
     .personal-block { top: 108px; left: 16px; }
   }
 
@@ -125,14 +149,22 @@
     border-radius: 10px;
     box-shadow: 0 30px 60px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
     overflow: hidden;
-    animation: rise 0.5s ease-out;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
   }
 
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(14px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  .window.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
   }
 
   .titlebar {
@@ -143,6 +175,15 @@
     padding: 0 12px;
     position: relative;
     border-bottom: 1px solid #d5d5d5;
+    cursor: grab;
+  }
+
+  .titlebar.dragging {
+    cursor: grabbing;
+  }
+
+  .window.dragging {
+    user-select: none;
   }
 
   .traffic-lights {
@@ -157,10 +198,25 @@
     height: 12px;
     border-radius: 50%;
     flex-shrink: 0;
+    border: none;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    line-height: 1;
   }
   .dot.red { background: #ff5f57; }
   .dot.yellow { background: #febc2e; }
   .dot.green { background: #28c840; }
+
+  .dot.red,
+  .dot.yellow {
+    cursor: pointer;
+  }
+  .dot.red:hover,
+  .dot.yellow:hover {
+    filter: brightness(1.15);
+  }
 
   .titlebar-title {
     position: absolute;
@@ -171,8 +227,8 @@
   }
 
   .content {
-    padding: 56px 48px 64px;
-    height: 494px;
+    padding: 48px 48px 52px;
+    max-height: 70vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #d0d0d0 transparent;
@@ -221,59 +277,6 @@
     gap: 2px;
   }
 
-  .edits-label {
-    font-size: 11px;
-    text-transform: lowercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    margin: 40px 0 10px 4px;
-  }
-
-  .edits-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    max-width: 360px;
-  }
-
-  .edits-row {
-    display: flex;
-    gap: 4px;
-    height: 110px;
-  }
-
-  .edits-row.row-top .edit-thumb:first-child {
-    flex: 1.9;
-  }
-  .edits-row.row-top .edit-thumb:last-child {
-    flex: 1;
-  }
-
-  .edits-row.row-bottom .edit-thumb {
-    flex: 1;
-  }
-
-  .edit-thumb {
-    position: relative;
-    display: block;
-    border-radius: 0;
-    overflow: hidden;
-    background: #1a1a1a;
-    text-decoration: none;
-  }
-
-  .edit-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.2s ease;
-  }
-
-  .edit-thumb:hover img {
-    transform: scale(1.05);
-  }
-
   .link-item {
     display: inline-flex;
     align-items: center;
@@ -308,17 +311,248 @@
   }
 
   @media (max-width: 480px) {
-    .content { padding: 40px 28px 48px; height: 420px; }
+    .content { padding: 36px 28px 40px; max-height: 76vh; }
     .name { font-size: 24px; }
+  }
+
+  /* ---- Gallery window (Photos-app import style) ---- */
+
+  .window.photos-window {
+    max-width: 814px;
+    width: 95vw;
+    height: 538px;
+    max-height: 90vh;
+  }
+
+  .photos-titlebar {
+    height: 40px;
+    gap: 12px;
+    cursor: grab;
+  }
+
+  .photos-titlebar.dragging {
+    cursor: grabbing;
+  }
+
+  .sidebar-toggle-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    flex-shrink: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .sidebar-toggle-btn:hover { background: rgba(0,0,0,0.06); }
+  .sidebar-toggle-btn svg { width: 16px; height: 16px; }
+
+  .import-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .photos-titlebar-spacer { flex: 1; }
+
+  .zoom-slider {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #aaa;
+    font-size: 14px;
+  }
+  .zoom-slider input[type="range"] {
+    width: 90px;
+    accent-color: #0a6cff;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    font-size: 12.5px;
+    padding: 5px 13px;
+    border-radius: 6px;
+    border: 1px solid #d7d7d7;
+    background: #fff;
+    cursor: pointer;
+    color: #1a1a1a;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .btn-secondary {
+    color: #b7b7b7;
+    border-color: #e6e6e6;
+    cursor: default;
+  }
+  .btn-primary:hover { background: #f3f3f3; }
+
+  .photos-subtoolbar {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 9px 20px;
+    border-bottom: 1px solid #ececec;
+    font-size: 12.5px;
+    color: #333;
+    flex-shrink: 0;
+  }
+  .photos-subtoolbar label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #999;
+  }
+  .album-select {
+    color: #333;
+  }
+  .album-select select {
+    font-size: 12.5px;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    padding: 2px 6px;
+    background: #fff;
+    color: #333;
+  }
+
+  .photos-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .photos-sidebar {
+    width: 180px;
+    flex-shrink: 0;
+    background: #f6f6f6;
+    border-right: 1px solid #e6e6e6;
+    padding: 12px 8px;
+    font-size: 12.5px;
+    color: #333;
+    overflow-y: auto;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .sidebar-item:hover { background: rgba(0,0,0,0.05); }
+  .sidebar-item.active { background: #0a6cff; color: #fff; }
+  .sidebar-item .icon {
+    width: 15px;
+    text-align: center;
+    font-size: 12.5px;
+  }
+
+  .sidebar-group-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #999;
+    margin: 13px 0 4px 8px;
+  }
+
+  .photos-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .photos-count {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #333;
+    margin: 12px 0 10px 20px;
+    flex-shrink: 0;
+  }
+
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 0 20px 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #d0d0d0 transparent;
+  }
+
+  .photo-tile {
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: #1a1a1a;
+    text-decoration: none;
+  }
+
+  .photo-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .photo-tile:hover img {
+    transform: scale(1.05);
+  }
+
+  .photo-tile.is-video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.45), transparent 45%);
+    pointer-events: none;
+  }
+
+  .photo-tile.is-video::before {
+    content: '▶';
+    position: absolute;
+    left: 6px;
+    bottom: 5px;
+    color: #fff;
+    font-size: 10px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  @media (max-width: 640px) {
+    .photos-sidebar { display: none; }
+    .photos-grid { grid-template-columns: repeat(3, 1fr); }
+    .zoom-slider { display: none; }
   }
 </style>
 </head>
 <body>
 
-  <a class="desktop-icon" href="https://payhip.com/frstup6d" target="_blank" rel="noopener">
-    <img class="folder" src="folder-icon.png" alt="payhip folder">
-    <span>payhip</span>
-  </a>
+  <div class="desktop-icons">
+    <a class="desktop-icon" href="https://payhip.com/frstup6d" target="_blank" rel="noopener">
+      <img class="folder" src="folder-icon.png" alt="payhip folder">
+      <span>payhip</span>
+    </a>
+
+    <button class="desktop-icon" data-window="infoWindow" type="button" aria-label="Открыть окно info">
+      <img class="app-icon" id="infoIconImg" src="info-icon.png" alt="info app icon">
+      <span>info</span>
+    </button>
+
+    <button class="desktop-icon" data-window="galleryWindow" type="button" aria-label="Открыть окно gallery">
+      <img class="app-icon" id="galleryIconImg" src="gallery-icon.png" alt="gallery app icon">
+      <span>gallery</span>
+    </button>
+  </div>
 
   <div class="personal-block">
     <p class="personal-label">personal</p>
@@ -332,14 +566,14 @@
     </div>
   </div>
 
-  <div class="window">
+  <div class="window" id="infoWindow">
     <div class="titlebar">
       <div class="traffic-lights">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
+        <button class="dot red" type="button" aria-label="Закрыть окно"></button>
+        <button class="dot yellow" type="button" aria-label="Скрыть окно"></button>
         <span class="dot green"></span>
       </div>
-      <div class="titlebar-title">fun group</div>
+      <div class="titlebar-title">info</div>
     </div>
 
     <div class="content">
@@ -360,90 +594,298 @@
         </a>
         <a class="link-item no-icon" href="https://www.cosmos.so/frstup6d" target="_blank" rel="noopener">cosmos</a>
       </div>
+    </div>
+  </div>
 
-      <p class="edits-label">recent edits</p>
-      <div class="edits-grid" id="edits-grid">
-        <div class="edits-row row-top">
-          <a class="edit-thumb" data-slot="0" href="#" target="_blank" rel="noopener">
-            <img alt="tiktok edit 1">
-          </a>
-          <a class="edit-thumb" data-slot="1" href="#" target="_blank" rel="noopener">
-            <img alt="tiktok edit 2">
-          </a>
-        </div>
-        <div class="edits-row row-bottom">
-          <a class="edit-thumb" data-slot="2" href="#" target="_blank" rel="noopener">
-            <img alt="tiktok edit 3">
-          </a>
-          <a class="edit-thumb" data-slot="3" href="#" target="_blank" rel="noopener">
-            <img alt="tiktok edit 4">
-          </a>
-          <a class="edit-thumb" data-slot="4" href="#" target="_blank" rel="noopener">
-            <img alt="tiktok edit 5">
-          </a>
-        </div>
+  <div class="window photos-window" id="galleryWindow">
+    <div class="titlebar photos-titlebar">
+      <div class="traffic-lights">
+        <button class="dot red" type="button" aria-label="Закрыть окно"></button>
+        <button class="dot yellow" type="button" aria-label="Скрыть окно"></button>
+        <span class="dot green"></span>
+      </div>
+      <button class="sidebar-toggle-btn" type="button" aria-label="Показать/скрыть боковую панель">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="7.5" y1="3" x2="7.5" y2="17" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+      </button>
+      <span class="import-title">Import</span>
+      <div class="photos-titlebar-spacer"></div>
+      <div class="zoom-slider">
+        <span>–</span>
+        <input type="range" min="0" max="100" value="35">
+        <span>+</span>
+      </div>
+      <button class="btn-secondary" type="button" disabled>Import Selected</button>
+      <button class="btn-primary" type="button">Import All New Photos</button>
+    </div>
+
+    <div class="photos-subtoolbar">
+      <label><input type="checkbox"> Open Photos</label>
+      <div class="album-select">Album:
+        <select>
+          <option>None</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="photos-body">
+      <div class="photos-sidebar">
+        <div class="sidebar-item"><span class="icon">🖼️</span> Library</div>
+        <div class="sidebar-item"><span class="icon">📁</span> Collections</div>
+        <div class="sidebar-group-label">Devices</div>
+        <div class="sidebar-item active"><span class="icon">📱</span> Danny's iPhone</div>
+        <div class="sidebar-group-label">Pinned</div>
+        <div class="sidebar-group-label">Albums</div>
+        <div class="sidebar-group-label">Sharing</div>
+        <div class="sidebar-group-label">Media Types</div>
+        <div class="sidebar-group-label">Utilities</div>
+        <div class="sidebar-group-label">Projects</div>
+      </div>
+      <div class="photos-main">
+        <p class="photos-count">New Photos (15 photos)</p>
+        <div class="photos-grid" id="galleryGrid"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // ---- Paste your latest TikTok video links here, newest first ----
-    // Just add the link when you post a new edit — no need to upload any image.
-    // The thumbnail is fetched automatically from TikTok via their oEmbed API.
-    const TIKTOK_VIDEO_URLS = [
-      "https://www.tiktok.com/@frstup6d/video/7653555699057691935",
-      "https://www.tiktok.com/@frstup6d/video/7649902393361960223",
-      "https://www.tiktok.com/@frstup6d/video/7643179037707341087",
-      "https://www.tiktok.com/@frstup6d/video/7639257260165729567",
-      "https://www.tiktok.com/@frstup6d/video/7639671499279879454",
+    // ---- Fallback icons if the PNGs haven't been added to the repo yet ----
+    function setIconFallback(imgId, svg) {
+      const img = document.getElementById(imgId);
+      if (!img) return;
+      img.addEventListener('error', () => {
+        img.src = "data:image/svg+xml;utf8," + svg;
+      }, { once: true });
+    }
+
+    setIconFallback('infoIconImg',
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'>" +
+      "<rect width='52' height='52' rx='13' fill='%231a1aff'/>" +
+      "<circle cx='26' cy='17' r='3.4' fill='white'/>" +
+      "<rect x='22.6' y='23.5' width='6.8' height='19' rx='3.4' fill='white'/>" +
+      "</svg>"
+    );
+
+    setIconFallback('galleryIconImg',
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'>" +
+      "<rect width='52' height='52' rx='13' fill='%231a1aff'/>" +
+      "<circle cx='19' cy='19' r='4' fill='white'/>" +
+      "<path d='M10 38 L22 24 L30 32 L36 26 L44 38 Z' fill='white'/>" +
+      "</svg>"
+    );
+
+    // ---- Fill the gallery grid: load real work straight from Cloudinary ----
+    // 1. Create a free account at cloudinary.com, copy your "Cloud name" below.
+    // 2. Every time you upload a video/photo there, just tag it with CLOUDINARY_TAG
+    //    (in the Cloudinary Media Library — no coding, no git, no repo edits).
+    // 3. It shows up here automatically, newest first.
+    const CLOUDINARY_CLOUD_NAME = "rih889fk"; // <- вставь своё cloud name
+    const CLOUDINARY_TAG = "gallery"; // тег, которым помечаешь работы при загрузке
+
+    const PHOTO_GRADIENTS = [
+      ['#cbd5e0', '#94a3b8'], ['#f1f5f9', '#cbd5e1'], ['#60a5fa', '#bfdbfe'],
+      ['#fbbf24', '#f472b6'], ['#34d399', '#a3e635'], ['#94a3b8', '#e5e7eb'],
+      ['#f59e0b', '#b45309'], ['#f97316', '#7c2d12'], ['#fb7185', '#a78bfa'],
+      ['#facc15', '#eab308'], ['#a78bfa', '#fca5a5'], ['#d97706', '#78350f'],
+      ['#0ea5e9', '#082f49'], ['#334155', '#0f172a'], ['#78716c', '#292524'],
     ];
 
-    // ---- Optional manual fallback thumbnails ----
-    // If TikTok's oEmbed can't be reached (CORS issues, TikTok downtime, etc.),
-    // you can drop a local image here as backup, e.g. "edit-1.jpg".
-    // Leave as null to just show a dark empty tile instead.
-    const FALLBACK_THUMBS = [null, null, null, null, null];
-
-    async function fetchOEmbed(url) {
-      const target = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
-
-      // Try a direct request first (works if TikTok ever allows it).
-      try {
-        const res = await fetch(target);
-        if (res.ok) return await res.json();
-      } catch (e) { /* blocked by CORS, fall through to proxy */ }
-
-      // Fall back to a CORS proxy so the browser can read the response.
-      try {
-        const proxied = `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`;
-        const res = await fetch(proxied);
-        if (res.ok) return await res.json();
-      } catch (e) { /* proxy also failed */ }
-
-      return null;
+    function renderPlaceholderTiles(grid) {
+      grid.innerHTML = '';
+      PHOTO_GRADIENTS.forEach(([a, b]) => {
+        const tile = document.createElement('div');
+        tile.className = 'photo-tile';
+        tile.style.background = `linear-gradient(135deg, ${a}, ${b})`;
+        grid.appendChild(tile);
+      });
     }
 
-    async function loadRecentEdits() {
-      const slots = document.querySelectorAll('#edits-grid .edit-thumb');
-
-      await Promise.all(TIKTOK_VIDEO_URLS.slice(0, slots.length).map(async (url, i) => {
-        const slot = slots[i];
-        const data = await fetchOEmbed(url);
-
-        if (data && data.thumbnail_url) {
-          slot.href = url;
-          slot.querySelector('img').src = data.thumbnail_url;
-        } else {
-          console.warn('Could not load TikTok thumbnail for', url, '— using fallback if set');
-          slot.href = url;
-          if (FALLBACK_THUMBS[i]) {
-            slot.querySelector('img').src = FALLBACK_THUMBS[i];
-          }
+    function renderGalleryTiles(grid, items) {
+      grid.innerHTML = '';
+      items.forEach((item) => {
+        const tile = document.createElement('a');
+        tile.className = 'photo-tile' + (item.video ? ' is-video' : '');
+        tile.href = item.video || item.thumb || '#';
+        tile.target = '_blank';
+        tile.rel = 'noopener';
+        if (item.title) tile.title = item.title;
+        if (item.thumb) {
+          const img = document.createElement('img');
+          img.src = item.thumb;
+          img.loading = 'lazy';
+          img.alt = item.title || 'edit';
+          tile.appendChild(img);
         }
-      }));
+        grid.appendChild(tile);
+      });
     }
 
-    loadRecentEdits();
+    async function fetchCloudinaryList(resourceType) {
+      const url = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/${resourceType}/list/${CLOUDINARY_TAG}.json`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`cloudinary ${resourceType} list failed (${res.status})`);
+      const data = await res.json();
+      return (Array.isArray(data.resources) ? data.resources : []).map((r) => ({ ...r, resource_type: resourceType }));
+    }
+
+    function cloudinaryThumbUrl(item) {
+      const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}`;
+      if (item.resource_type === 'video') {
+        return `${base}/video/upload/so_1,w_400,h_400,c_fill,q_auto,f_jpg/${item.public_id}.jpg`;
+      }
+      return `${base}/image/upload/w_400,h_400,c_fill,q_auto,f_auto/${item.public_id}.${item.format}`;
+    }
+
+    function cloudinaryFullUrl(item) {
+      const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}`;
+      return `${base}/${item.resource_type}/upload/${item.public_id}.${item.format}`;
+    }
+
+    async function loadGallery() {
+      const grid = document.getElementById('galleryGrid');
+      const countLabel = document.querySelector('.photos-count');
+      if (!grid) return;
+
+      if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+        renderPlaceholderTiles(grid);
+        return;
+      }
+
+      try {
+        const [images, videos] = await Promise.all([
+          fetchCloudinaryList('image').catch(() => []),
+          fetchCloudinaryList('video').catch(() => []),
+        ]);
+        const items = [...images, ...videos].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        if (items.length === 0) throw new Error('no items tagged yet');
+
+        renderGalleryTiles(grid, items.map((item) => ({
+          title: item.public_id,
+          thumb: cloudinaryThumbUrl(item),
+          video: item.resource_type === 'video' ? cloudinaryFullUrl(item) : null,
+        })));
+        if (countLabel) countLabel.textContent = `New Photos (${items.length} photos)`;
+      } catch (e) {
+        renderPlaceholderTiles(grid);
+      }
+    }
+
+    loadGallery();
+
+    // ---- Windows: open / close / hide / drag / bring-to-front ----
+    (function() {
+      let topZ = 10;
+      const controllers = {};
+
+      function setupWindow(win) {
+        const titlebar = win.querySelector('.titlebar');
+        const closeBtn = win.querySelector('.dot.red');
+        const hideBtn = win.querySelector('.dot.yellow');
+        let offsetX = 0, offsetY = 0, dragging = false;
+
+        function bringToFront() {
+          topZ += 1;
+          win.style.zIndex = topZ;
+        }
+
+        function toFixedPosition() {
+          const rect = win.getBoundingClientRect();
+          win.style.left = rect.left + 'px';
+          win.style.top = rect.top + 'px';
+          win.style.transform = 'none';
+        }
+
+        function startDrag(x, y) {
+          bringToFront();
+          toFixedPosition();
+          const rect = win.getBoundingClientRect();
+          offsetX = x - rect.left;
+          offsetY = y - rect.top;
+          dragging = true;
+          titlebar.classList.add('dragging');
+          win.classList.add('dragging');
+        }
+
+        function moveDrag(x, y) {
+          if (!dragging) return;
+          const minVisible = 40;
+          let left = x - offsetX;
+          let top = y - offsetY;
+          left = Math.min(Math.max(left, minVisible - win.offsetWidth), window.innerWidth - minVisible);
+          top = Math.min(Math.max(top, 0), window.innerHeight - minVisible);
+          win.style.left = left + 'px';
+          win.style.top = top + 'px';
+        }
+
+        function stopDrag() {
+          dragging = false;
+          titlebar.classList.remove('dragging');
+          win.classList.remove('dragging');
+        }
+
+        titlebar.addEventListener('mousedown', (e) => {
+          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .btn-primary, .btn-secondary, input')) return;
+          startDrag(e.clientX, e.clientY);
+          e.preventDefault();
+        });
+        document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+        document.addEventListener('mouseup', stopDrag);
+
+        titlebar.addEventListener('touchstart', (e) => {
+          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .btn-primary, .btn-secondary, input')) return;
+          const t = e.touches[0];
+          startDrag(t.clientX, t.clientY);
+        }, { passive: true });
+        document.addEventListener('touchmove', (e) => {
+          if (!dragging) return;
+          const t = e.touches[0];
+          moveDrag(t.clientX, t.clientY);
+        }, { passive: true });
+        document.addEventListener('touchend', stopDrag);
+
+        win.addEventListener('mousedown', bringToFront);
+
+        function dismiss(e) {
+          e.stopPropagation();
+          win.classList.remove('visible');
+        }
+        if (closeBtn) closeBtn.addEventListener('click', dismiss);
+        if (hideBtn) hideBtn.addEventListener('click', dismiss);
+
+        window.addEventListener('resize', () => {
+          if (win.style.left) {
+            const rect = win.getBoundingClientRect();
+            const minVisible = 40;
+            let left = Math.min(rect.left, window.innerWidth - minVisible);
+            let top = Math.min(rect.top, window.innerHeight - minVisible);
+            win.style.left = Math.max(left, minVisible - win.offsetWidth) + 'px';
+            win.style.top = Math.max(top, 0) + 'px';
+          }
+        });
+
+        return {
+          open() {
+            win.classList.add('visible');
+            bringToFront();
+          }
+        };
+      }
+
+      document.querySelectorAll('.window').forEach((win) => {
+        controllers[win.id] = setupWindow(win);
+      });
+
+      document.querySelectorAll('.desktop-icon[data-window]').forEach((icon) => {
+        icon.addEventListener('click', () => {
+          const controller = controllers[icon.dataset.window];
+          if (controller) controller.open();
+        });
+      });
+    })();
   </script>
 
 </body>
