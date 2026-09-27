@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>artyom chrmgrm</title>
+<title>chrmgrm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,6 +18,8 @@
   }
 
   * { box-sizing: border-box; }
+
+  [hidden] { display: none !important; }
 
   html, body {
     margin: 0;
@@ -67,17 +69,14 @@
 
   .desktop-icon .folder {
     width: 52px;
-    height: 44px;
+    height: 52px;
     object-fit: contain;
   }
 
   .desktop-icon .app-icon {
     width: 52px;
     height: 52px;
-    object-fit: cover;
-    border-radius: 13px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-    background: #eef1ff;
+    object-fit: contain;
   }
 
   .desktop-icon span {
@@ -360,6 +359,79 @@
 
   .photos-titlebar-spacer { flex: 1; }
 
+  .titlebar-mode {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .detail-back-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #444;
+    flex-shrink: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .detail-back-btn:hover { background: rgba(0,0,0,0.06); }
+  .detail-back-btn svg { width: 15px; height: 15px; }
+
+  .detail-title-group {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .detail-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .detail-meta {
+    font-size: 10.5px;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .detail-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #555;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .icon-btn:hover { background: rgba(0,0,0,0.06); }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .icon-btn.is-active { color: #ff375f; }
+
   .zoom-slider {
     display: flex;
     align-items: center;
@@ -495,6 +567,188 @@
     overflow: hidden;
     background: #1a1a1a;
     text-decoration: none;
+    border: none;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .photo-tile.is-video {
+    cursor: pointer;
+  }
+
+  /* ---- Detail / player view ---- */
+
+  .photos-grid-view,
+  .photos-detail-view {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-stage {
+    flex: 1;
+    min-height: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-stage img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.15s ease;
+  }
+
+  .detail-placeholder-block {
+    width: 100%;
+    height: 100%;
+  }
+
+  .detail-filmstrip {
+    flex-shrink: 0;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    overflow-x: auto;
+    background: #fafafa;
+    border-top: 1px solid #ececec;
+    scrollbar-width: thin;
+    scrollbar-color: #d0d0d0 transparent;
+  }
+
+  .filmstrip-thumb {
+    flex-shrink: 0;
+    width: 44px;
+    height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background: #1a1a1a;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .filmstrip-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .filmstrip-thumb.active { border-color: #0a6cff; }
+
+  /* ---- Custom video player (matches the QuickTime-style overlay controls) ---- */
+
+  .video-player {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .video-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(45px) brightness(0.5) saturate(1.1);
+    transform: scale(1.15);
+    pointer-events: none;
+  }
+
+  .video-main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: transparent;
+  }
+
+  .video-controls {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(35,35,38,0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
+    padding: 8px 14px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 230px;
+  }
+
+  .video-controls-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .video-controls-spacer { flex: 1; }
+
+  .video-controls button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #e2e2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .video-controls button:hover { color: #fff; }
+  .video-controls button svg { width: 13px; height: 13px; }
+  .video-controls .vc-play svg { width: 15px; height: 15px; }
+
+  .video-controls input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    background: rgba(255,255,255,0.25);
+  }
+  .video-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  }
+  .video-controls input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+  }
+  .vc-volume { width: 64px; }
+  .vc-seek { width: 100%; }
+
+  @media (max-width: 640px) {
+    .detail-title-group { display: none; }
+    .video-controls { min-width: 180px; }
   }
 
   .photo-tile img {
@@ -604,24 +858,67 @@
         <button class="dot yellow" type="button" aria-label="Скрыть окно"></button>
         <span class="dot green"></span>
       </div>
-      <button class="sidebar-toggle-btn" type="button" aria-label="Показать/скрыть боковую панель">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
-          <line x1="7.5" y1="3" x2="7.5" y2="17" stroke="currentColor" stroke-width="1.4"/>
-        </svg>
-      </button>
-      <span class="import-title">Import</span>
-      <div class="photos-titlebar-spacer"></div>
-      <div class="zoom-slider">
-        <span>–</span>
-        <input type="range" min="0" max="100" value="35">
-        <span>+</span>
+      <div class="titlebar-mode" id="gridModeBar">
+        <button class="sidebar-toggle-btn" type="button" aria-label="Показать/скрыть боковую панель">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+            <line x1="7.5" y1="3" x2="7.5" y2="17" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </button>
+        <span class="import-title">Import</span>
+        <div class="photos-titlebar-spacer"></div>
+        <div class="zoom-slider">
+          <span>–</span>
+          <input type="range" min="0" max="100" value="35">
+          <span>+</span>
+        </div>
+        <button class="btn-secondary" type="button" disabled>Import Selected</button>
+        <button class="btn-primary" type="button">Import All New Photos</button>
       </div>
-      <button class="btn-secondary" type="button" disabled>Import Selected</button>
-      <button class="btn-primary" type="button">Import All New Photos</button>
+
+      <div class="titlebar-mode" id="detailModeBar" hidden>
+        <button class="sidebar-toggle-btn" type="button" aria-label="Показать/скрыть боковую панель">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+            <line x1="7.5" y1="3" x2="7.5" y2="17" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </button>
+        <button class="detail-back-btn" id="detailBackBtn" type="button" aria-label="Назад к библиотеке">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 4L6.5 10L12.5 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="zoom-slider">
+          <span>–</span>
+          <input type="range" min="0" max="100" value="0">
+          <span>+</span>
+        </div>
+        <div class="detail-title-group">
+          <div class="detail-title" id="detailTitle">—</div>
+          <div class="detail-meta" id="detailMeta">—</div>
+        </div>
+        <div class="detail-actions">
+          <button class="icon-btn" type="button" title="Info">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="7.3" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="6.6" r="0.9" fill="currentColor"/><line x1="10" y1="9" x2="10" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </button>
+          <button class="icon-btn" type="button" title="Share">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3v9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6.5 6.5L10 3l3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.5v4a1.5 1.5 0 001.5 1.5h8a1.5 1.5 0 001.5-1.5v-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" type="button" id="detailFavBtn" title="Mark as a favorite">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 16.5s-6-3.6-6-8.1C4 5.8 5.8 4 8 4c0.9 0 1.8 0.4 2 1.2C10.2 4.4 11.1 4 12 4c2.2 0 4 1.8 4 4.4 0 4.5-6 8.1-6 8.1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" type="button" title="Duplicate">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="6" width="9" height="10" rx="1.3" stroke="currentColor" stroke-width="1.4"/><path d="M7 6V5a1.3 1.3 0 011.3-1.3H15A1.3 1.3 0 0116.3 5v9A1.3 1.3 0 0115 15.3h-1" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+          <button class="icon-btn" type="button" title="Adjust">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15L15 4l1 1L5 16z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 4.5l1.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <button class="btn-primary" type="button">Edit</button>
+      </div>
     </div>
 
-    <div class="photos-subtoolbar">
+    <div class="photos-subtoolbar" id="gridSubtoolbar">
       <label><input type="checkbox"> Open Photos</label>
       <div class="album-select">Album:
         <select>
@@ -644,8 +941,14 @@
         <div class="sidebar-group-label">Projects</div>
       </div>
       <div class="photos-main">
-        <p class="photos-count">New Photos (15 photos)</p>
-        <div class="photos-grid" id="galleryGrid"></div>
+        <div class="photos-grid-view" id="galleryGridView">
+          <p class="photos-count">New Photos (15 photos)</p>
+          <div class="photos-grid" id="galleryGrid"></div>
+        </div>
+        <div class="photos-detail-view" id="galleryDetailView" hidden>
+          <div class="detail-stage" id="detailStage"></div>
+          <div class="detail-filmstrip" id="detailFilmstrip"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -676,7 +979,7 @@
       "</svg>"
     );
 
-    // ---- Fill the gallery grid: load real work straight from Cloudinary ----
+    // ---- Gallery data: load real work straight from Cloudinary ----
     // 1. Create a free account at cloudinary.com, copy your "Cloud name" below.
     // 2. Every time you upload a video/photo there, just tag it with CLOUDINARY_TAG
     //    (in the Cloudinary Media Library — no coding, no git, no repo edits).
@@ -692,34 +995,15 @@
       ['#0ea5e9', '#082f49'], ['#334155', '#0f172a'], ['#78716c', '#292524'],
     ];
 
-    function renderPlaceholderTiles(grid) {
-      grid.innerHTML = '';
-      PHOTO_GRADIENTS.forEach(([a, b]) => {
-        const tile = document.createElement('div');
-        tile.className = 'photo-tile';
-        tile.style.background = `linear-gradient(135deg, ${a}, ${b})`;
-        grid.appendChild(tile);
-      });
-    }
-
-    function renderGalleryTiles(grid, items) {
-      grid.innerHTML = '';
-      items.forEach((item) => {
-        const tile = document.createElement('a');
-        tile.className = 'photo-tile' + (item.video ? ' is-video' : '');
-        tile.href = item.video || item.thumb || '#';
-        tile.target = '_blank';
-        tile.rel = 'noopener';
-        if (item.title) tile.title = item.title;
-        if (item.thumb) {
-          const img = document.createElement('img');
-          img.src = item.thumb;
-          img.loading = 'lazy';
-          img.alt = item.title || 'edit';
-          tile.appendChild(img);
-        }
-        grid.appendChild(tile);
-      });
+    function placeholderItems() {
+      return PHOTO_GRADIENTS.map(([a, b], i) => ({
+        title: `Photo ${i + 1}`,
+        thumb: null,
+        image: null,
+        video: null,
+        gradient: [a, b],
+        created_at: null,
+      }));
     }
 
     async function fetchCloudinaryList(resourceType) {
@@ -743,38 +1027,287 @@
       return `${base}/${item.resource_type}/upload/${item.public_id}.${item.format}`;
     }
 
-    async function loadGallery() {
-      const grid = document.getElementById('galleryGrid');
-      const countLabel = document.querySelector('.photos-count');
-      if (!grid) return;
+    function cloudinaryDetailImageUrl(item) {
+      const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}`;
+      return `${base}/image/upload/w_1200,q_auto,f_auto/${item.public_id}.${item.format}`;
+    }
 
+    async function loadGalleryItems() {
       if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
-        renderPlaceholderTiles(grid);
-        return;
+        return placeholderItems();
       }
-
       try {
         const [images, videos] = await Promise.all([
           fetchCloudinaryList('image').catch(() => []),
           fetchCloudinaryList('video').catch(() => []),
         ]);
-        const items = [...images, ...videos].sort(
+        const raw = [...images, ...videos].sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-        if (items.length === 0) throw new Error('no items tagged yet');
+        if (raw.length === 0) throw new Error('no items tagged yet');
 
-        renderGalleryTiles(grid, items.map((item) => ({
+        return raw.map((item) => ({
           title: item.public_id,
           thumb: cloudinaryThumbUrl(item),
+          image: item.resource_type === 'image' ? cloudinaryDetailImageUrl(item) : null,
           video: item.resource_type === 'video' ? cloudinaryFullUrl(item) : null,
-        })));
-        if (countLabel) countLabel.textContent = `New Photos (${items.length} photos)`;
+          gradient: null,
+          created_at: item.created_at || null,
+        }));
       } catch (e) {
-        renderPlaceholderTiles(grid);
+        return placeholderItems();
       }
     }
 
-    loadGallery();
+    // ---- Icons for the custom video player ----
+    const ICON_PLAY = '<svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z" fill="currentColor"/></svg>';
+    const ICON_PAUSE = '<svg viewBox="0 0 16 16"><rect x="3" y="2" width="3.4" height="12" fill="currentColor"/><rect x="9.6" y="2" width="3.4" height="12" fill="currentColor"/></svg>';
+    const ICON_REWIND = '<svg viewBox="0 0 16 16"><path d="M8 2L2 8l6 6V2z" fill="currentColor"/><path d="M14 2L8 8l6 6V2z" fill="currentColor"/></svg>';
+    const ICON_FORWARD = '<svg viewBox="0 0 16 16"><path d="M8 2l6 6-6 6V2z" fill="currentColor"/><path d="M2 2l6 6-6 6V2z" fill="currentColor"/></svg>';
+    const ICON_VOLUME = '<svg viewBox="0 0 16 16"><path d="M2 6v4h3l4 3V3L5 6H2z" fill="currentColor"/><path d="M10.5 5.3a3.6 3.6 0 010 5.4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>';
+    const ICON_MUTE = '<svg viewBox="0 0 16 16"><path d="M2 6v4h3l4 3V3L5 6H2z" fill="currentColor"/><path d="M11 6l3.2 4M14.2 6L11 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+
+    function styleRangeFill(input) {
+      const min = +input.min || 0, max = +input.max || 100, val = +input.value;
+      const pct = max > min ? ((val - min) / (max - min)) * 100 : 0;
+      input.style.background = `linear-gradient(to right, #0a84ff 0%, #0a84ff ${pct}%, rgba(255,255,255,0.25) ${pct}%, rgba(255,255,255,0.25) 100%)`;
+    }
+
+    function buildVideoPlayer(item) {
+      const wrap = document.createElement('div');
+      wrap.className = 'video-player';
+
+      const backdrop = document.createElement('video');
+      backdrop.className = 'video-backdrop';
+      backdrop.src = item.video;
+      backdrop.muted = true;
+      backdrop.playsInline = true;
+      backdrop.preload = 'auto';
+      backdrop.tabIndex = -1;
+      wrap.appendChild(backdrop);
+
+      const video = document.createElement('video');
+      video.className = 'video-main';
+      video.src = item.video;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      wrap.appendChild(video);
+
+      function syncBackdrop() {
+        if (Math.abs(backdrop.currentTime - video.currentTime) > 0.25) {
+          backdrop.currentTime = video.currentTime;
+        }
+      }
+      video.addEventListener('play', () => { syncBackdrop(); backdrop.play().catch(() => {}); });
+      video.addEventListener('pause', () => backdrop.pause());
+      video.addEventListener('seeked', syncBackdrop);
+      video.addEventListener('timeupdate', syncBackdrop);
+
+      const controls = document.createElement('div');
+      controls.className = 'video-controls';
+      controls.innerHTML = `
+        <div class="video-controls-row">
+          <button class="vc-mute" type="button" aria-label="Mute">${ICON_VOLUME}</button>
+          <input class="vc-volume" type="range" min="0" max="1" step="0.01" value="1">
+          <div class="video-controls-spacer"></div>
+          <button class="vc-rewind" type="button" aria-label="Rewind 10s">${ICON_REWIND}</button>
+          <button class="vc-play" type="button" aria-label="Play">${ICON_PLAY}</button>
+          <button class="vc-forward" type="button" aria-label="Forward 10s">${ICON_FORWARD}</button>
+        </div>
+        <input class="vc-seek" type="range" min="0" max="100" value="0" step="0.1">
+      `;
+      wrap.appendChild(controls);
+
+      const playBtn = controls.querySelector('.vc-play');
+      const muteBtn = controls.querySelector('.vc-mute');
+      const volumeInput = controls.querySelector('.vc-volume');
+      const seekInput = controls.querySelector('.vc-seek');
+      const rewindBtn = controls.querySelector('.vc-rewind');
+      const forwardBtn = controls.querySelector('.vc-forward');
+
+      styleRangeFill(volumeInput);
+      styleRangeFill(seekInput);
+
+      function togglePlay() {
+        if (video.paused) video.play(); else video.pause();
+      }
+
+      playBtn.addEventListener('click', togglePlay);
+      video.addEventListener('click', togglePlay);
+      video.addEventListener('play', () => { playBtn.innerHTML = ICON_PAUSE; });
+      video.addEventListener('pause', () => { playBtn.innerHTML = ICON_PLAY; });
+
+      rewindBtn.addEventListener('click', () => { video.currentTime = Math.max(0, video.currentTime - 10); });
+      forwardBtn.addEventListener('click', () => { video.currentTime = Math.min(video.duration || 0, video.currentTime + 10); });
+
+      volumeInput.addEventListener('input', () => {
+        video.volume = +volumeInput.value;
+        video.muted = +volumeInput.value === 0;
+        muteBtn.innerHTML = video.muted ? ICON_MUTE : ICON_VOLUME;
+        styleRangeFill(volumeInput);
+      });
+
+      muteBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        muteBtn.innerHTML = video.muted ? ICON_MUTE : ICON_VOLUME;
+        if (!video.muted && video.volume === 0) { video.volume = 1; volumeInput.value = 1; }
+        styleRangeFill(volumeInput);
+      });
+
+      video.addEventListener('timeupdate', () => {
+        if (!video.duration) return;
+        seekInput.value = (video.currentTime / video.duration) * 100;
+        styleRangeFill(seekInput);
+      });
+
+      seekInput.addEventListener('input', () => {
+        if (!video.duration) return;
+        video.currentTime = (+seekInput.value / 100) * video.duration;
+        styleRangeFill(seekInput);
+      });
+
+      return wrap;
+    }
+
+    // ---- Video playback page: separate from the grid, only videos open it ----
+    (function() {
+      const galleryWindow = document.getElementById('galleryWindow');
+      if (!galleryWindow) return;
+
+      const gridView = document.getElementById('galleryGridView');
+      const detailView = document.getElementById('galleryDetailView');
+      const grid = document.getElementById('galleryGrid');
+      const countLabel = document.querySelector('.photos-count');
+      const gridModeBar = document.getElementById('gridModeBar');
+      const detailModeBar = document.getElementById('detailModeBar');
+      const gridSubtoolbar = document.getElementById('gridSubtoolbar');
+      const detailStage = document.getElementById('detailStage');
+      const detailFilmstrip = document.getElementById('detailFilmstrip');
+      const detailTitle = document.getElementById('detailTitle');
+      const detailMeta = document.getElementById('detailMeta');
+      const detailBackBtn = document.getElementById('detailBackBtn');
+      const detailFavBtn = document.getElementById('detailFavBtn');
+
+      let items = [];       // everything shown in the grid (photos + videos)
+      let videoItems = [];  // only the videos — this is what the player page navigates
+      let currentVideoIndex = 0;
+
+      function gridTileNode(item) {
+        const isVideo = !!item.video;
+        const tile = document.createElement(isVideo ? 'button' : 'div');
+        if (isVideo) tile.type = 'button';
+        tile.className = 'photo-tile' + (isVideo ? ' is-video' : '');
+        if (item.title) tile.title = item.title;
+
+        if (item.thumb) {
+          const img = document.createElement('img');
+          img.src = item.thumb;
+          img.loading = 'lazy';
+          img.alt = item.title || 'edit';
+          tile.appendChild(img);
+        } else if (item.gradient) {
+          tile.style.background = `linear-gradient(135deg, ${item.gradient[0]}, ${item.gradient[1]})`;
+        }
+
+        if (isVideo) {
+          const videoIndex = videoItems.indexOf(item);
+          tile.addEventListener('click', () => openPlayer(videoIndex));
+        }
+        return tile;
+      }
+
+      function filmstripTileNode(item, index) {
+        const tile = document.createElement('button');
+        tile.type = 'button';
+        tile.className = 'filmstrip-thumb';
+        if (item.title) tile.title = item.title;
+        if (item.thumb) {
+          const img = document.createElement('img');
+          img.src = item.thumb;
+          img.loading = 'lazy';
+          img.alt = item.title || 'edit';
+          tile.appendChild(img);
+        }
+        tile.addEventListener('click', () => openPlayer(index));
+        return tile;
+      }
+
+      function renderGrid() {
+        grid.innerHTML = '';
+        items.forEach((item) => grid.appendChild(gridTileNode(item)));
+        if (countLabel) countLabel.textContent = `New Photos (${items.length} photos)`;
+      }
+
+      function renderFilmstrip() {
+        detailFilmstrip.innerHTML = '';
+        videoItems.forEach((item, i) => {
+          const thumb = filmstripTileNode(item, i);
+          if (i === currentVideoIndex) thumb.classList.add('active');
+          detailFilmstrip.appendChild(thumb);
+        });
+      }
+
+      function formatMeta(item) {
+        const parts = [];
+        if (item.created_at) {
+          const d = new Date(item.created_at);
+          parts.push(d.toLocaleString(undefined, { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }));
+        }
+        parts.push(`${currentVideoIndex + 1} of ${videoItems.length}`);
+        return parts.join(' · ');
+      }
+
+      function openPlayer(index) {
+        if (index < 0 || index >= videoItems.length) return;
+        currentVideoIndex = index;
+        const item = videoItems[currentVideoIndex];
+
+        gridView.hidden = true;
+        detailView.hidden = false;
+        gridModeBar.hidden = true;
+        detailModeBar.hidden = false;
+        if (gridSubtoolbar) gridSubtoolbar.hidden = true;
+
+        detailTitle.textContent = item.title || '—';
+        detailMeta.textContent = formatMeta(item);
+        detailFavBtn.classList.remove('is-active');
+
+        detailStage.innerHTML = '';
+        detailStage.appendChild(buildVideoPlayer(item));
+        renderFilmstrip();
+
+        const mainVideo = detailStage.querySelector('.video-main');
+        if (mainVideo) mainVideo.play().catch(() => {});
+      }
+
+      function closePlayer() {
+        gridView.hidden = false;
+        detailView.hidden = true;
+        gridModeBar.hidden = false;
+        detailModeBar.hidden = true;
+        if (gridSubtoolbar) gridSubtoolbar.hidden = false;
+        detailStage.innerHTML = '';
+      }
+
+      detailBackBtn.addEventListener('click', closePlayer);
+      detailFavBtn.addEventListener('click', () => detailFavBtn.classList.toggle('is-active'));
+
+      document.addEventListener('keydown', (e) => {
+        if (!galleryWindow.classList.contains('visible') || detailView.hidden) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+        if (e.key === 'Escape') closePlayer();
+        else if (e.key === 'ArrowLeft') openPlayer(currentVideoIndex - 1);
+        else if (e.key === 'ArrowRight') openPlayer(currentVideoIndex + 1);
+      });
+
+      loadGalleryItems().then((loaded) => {
+        items = loaded;
+        videoItems = items.filter((i) => i.video);
+        renderGrid();
+      });
+    })();
 
     // ---- Windows: open / close / hide / drag / bring-to-front ----
     (function() {
@@ -801,10 +1334,23 @@
 
         function startDrag(x, y) {
           bringToFront();
-          toFixedPosition();
+
+          // Freeze the window before converting its centered transform
+          // into fixed left/top coordinates. Without this, the opening
+          // scale/transform transition can make the first drag jump.
           const rect = win.getBoundingClientRect();
-          offsetX = x - rect.left;
-          offsetY = y - rect.top;
+          win.style.transition = 'none';
+          win.style.left = rect.left + 'px';
+          win.style.top = rect.top + 'px';
+          win.style.transform = 'none';
+
+          // Force the browser to apply the new position, then calculate
+          // the mouse offset from the actual, final window rectangle.
+          void win.offsetWidth;
+          const fixedRect = win.getBoundingClientRect();
+          offsetX = x - fixedRect.left;
+          offsetY = y - fixedRect.top;
+
           dragging = true;
           titlebar.classList.add('dragging');
           win.classList.add('dragging');
@@ -822,13 +1368,16 @@
         }
 
         function stopDrag() {
+          if (!dragging) return;
           dragging = false;
           titlebar.classList.remove('dragging');
           win.classList.remove('dragging');
+          // Restore the normal transition after dragging has finished.
+          win.style.transition = '';
         }
 
         titlebar.addEventListener('mousedown', (e) => {
-          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .btn-primary, .btn-secondary, input')) return;
+          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .detail-back-btn, .icon-btn, .btn-primary, .btn-secondary, input, select')) return;
           startDrag(e.clientX, e.clientY);
           e.preventDefault();
         });
@@ -836,7 +1385,7 @@
         document.addEventListener('mouseup', stopDrag);
 
         titlebar.addEventListener('touchstart', (e) => {
-          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .btn-primary, .btn-secondary, input')) return;
+          if (e.target.closest('.dot.red, .dot.yellow, .sidebar-toggle-btn, .detail-back-btn, .icon-btn, .btn-primary, .btn-secondary, input, select')) return;
           const t = e.touches[0];
           startDrag(t.clientX, t.clientY);
         }, { passive: true });
